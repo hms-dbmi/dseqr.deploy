@@ -1,0 +1,23 @@
+{
+  "name": "dseqr-cdk-lambda",
+  "version": "0.1.0",
+  "bin": {
+    "dseqr-cdk-lambda": "bin/dseqr-cdk-lambda.js"
+  },
+  "scripts": {
+    "build": "echo \"The build step is not required when using JavaScript!\" && exit 0",
+    "cdk": "cdk",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@aws-cdk/assert": "1.87.1",
+    "aws-cdk": "1.87.1",
+    "jest": "^26.4.2"
+  },
+  "dependencies": {
+    "@aws-cdk/aws-sns": "1.87.1",
+    "@aws-cdk/aws-sns-subscriptions": "1.87.1",
+    "@aws-cdk/aws-sqs": "1.87.1",
+    "@aws-cdk/core": "1.87.1"
+  }
+}
