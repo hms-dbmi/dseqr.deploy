@@ -1,6 +1,8 @@
 #!/usr/bin/env node
-const cdk = require('@aws-cdk/core');
-const { DseqrCdkLambdaStack } = require('../lib/dseqr-cdk-lambda-stack');
-
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const cdk = require("@aws-cdk/core");
+const dseqr_cdk_lambda_stack_1 = require("../lib/dseqr-cdk-lambda-stack");
 const app = new cdk.App();
-new DseqrCdkLambdaStack(app, 'DseqrCdkLambdaStack');
+new dseqr_cdk_lambda_stack_1.CDKLambdaDocker(app, "CDKLambdaDockerStack");
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiZHNlcXItY2RrLWxhbWJkYS5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbImRzZXFyLWNkay1sYW1iZGEudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7O0FBQ0EscUNBQXFDO0FBQ3JDLDBFQUFnRTtBQUVoRSxNQUFNLEdBQUcsR0FBRyxJQUFJLEdBQUcsQ0FBQyxHQUFHLEVBQUUsQ0FBQztBQUMxQixJQUFJLHdDQUFlLENBQUMsR0FBRyxFQUFFLHNCQUFzQixDQUFDLENBQUMiLCJzb3VyY2VzQ29udGVudCI6WyIjIS91c3IvYmluL2VudiBub2RlXG5pbXBvcnQgKiBhcyBjZGsgZnJvbSBcIkBhd3MtY2RrL2NvcmVcIjtcbmltcG9ydCB7IENES0xhbWJkYURvY2tlciB9IGZyb20gXCIuLi9saWIvZHNlcXItY2RrLWxhbWJkYS1zdGFja1wiO1xuXG5jb25zdCBhcHAgPSBuZXcgY2RrLkFwcCgpO1xubmV3IENES0xhbWJkYURvY2tlcihhcHAsIFwiQ0RLTGFtYmRhRG9ja2VyU3RhY2tcIik7XG4iXX0=

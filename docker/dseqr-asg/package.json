@@ -1,8 +1,8 @@
 {
-  "name": "dseqr-cdk-lambda",
+  "name": "dseqr-asg",
   "version": "0.1.0",
   "bin": {
-    "dseqr-cdk-lambda": "bin/dseqr-cdk-lambda.js"
+    "dseqr-asg": "bin/dseqr-asg.js"
   },
   "scripts": {
     "build": "tsc",
@@ -21,10 +21,15 @@
     "typescript": "~3.9.7"
   },
   "dependencies": {
-    "@aws-cdk/aws-apigateway": "^1.88.0",
+    "@aws-cdk/aws-autoscaling": "^1.88.0",
+    "@aws-cdk/aws-certificatemanager": "^1.88.0",
+    "@aws-cdk/aws-cognito": "^1.88.0",
+    "@aws-cdk/aws-elasticloadbalancingv2": "^1.88.0",
+    "@aws-cdk/aws-route53": "^1.88.0",
+    "@aws-cdk/aws-route53-targets": "^1.88.0",
     "@aws-cdk/aws-sns": "1.87.1",
     "@aws-cdk/aws-sns-subscriptions": "1.87.1",
     "@aws-cdk/aws-sqs": "1.87.1",
-    "@aws-cdk/core": "1.87.1"
+    "@aws-cdk/core": "^1.88.0"
   }
 }
