@@ -122,7 +122,7 @@ export class DseqrAsgStack extends cdk.Stack {
       "apt-get -y install amazon-efs-utils",
       "apt-get -y install nfs-common",
       "file_system_id_1=" + fileSystem.fileSystemId,
-      "efs_mount_point_1=/srv/drugseqr",
+      "efs_mount_point_1=/srv/dseqr",
       'mkdir -p "${efs_mount_point_1}"',
       'test -f "/sbin/mount.efs" && echo "${file_system_id_1}:/ ${efs_mount_point_1} efs defaults,_netdev" >> /etc/fstab || ' +
         'echo "${file_system_id_1}.efs.' +
@@ -143,7 +143,7 @@ export class DseqrAsgStack extends cdk.Stack {
       `CLIENT_SECRET=${userPoolClientSecret}`
     );
 
-    // also replace drugseqr.com in configuration script
+    // also replace dseqr.com in configuration script
     const startupScript = fs.readFileSync("lib/configure.sh", "utf8");
     userData.addCommands(startupScript);
 

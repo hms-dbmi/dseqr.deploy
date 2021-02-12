@@ -13,22 +13,22 @@ apt-get update
 apt-get install docker-ce docker-ce-cli containerd.io -y
 docker run hello-world
 
-# pull drugseqr
-docker pull alexvpickering/drugseqr
+# pull dseqr
+docker pull alexvpickering/dseqr
 docker pull openanalytics/shinyproxy-demo
 docker network create sp-example-net
 
 # get Dockerfile for ShinyProxy image
-mkdir drugseqr.sp
-cd drugseqr.sp
-wget https://raw.githubusercontent.com/hms-dbmi/drugseqr.sp/master/Dockerfile
+mkdir dseqr.sp
+cd dseqr.sp
+wget https://raw.githubusercontent.com/hms-dbmi/dseqr.sp/master/Dockerfile
 
 # customize application.yml before building based on the name of your app/authentication/etc.
 # app.html fixes mobile bootstrap breakpoints (shinyproxy#96)
-wget https://raw.githubusercontent.com/hms-dbmi/drugseqr.sp/master/application.yml
-wget https://raw.githubusercontent.com/hms-dbmi/drugseqr.sp/master/app.html
-wget https://raw.githubusercontent.com/hms-dbmi/drugseqr.sp/master/login.html
-wget https://raw.githubusercontent.com/hms-dbmi/drugseqr.sp/master/index.html
+wget https://raw.githubusercontent.com/hms-dbmi/dseqr.sp/master/application.yml
+wget https://raw.githubusercontent.com/hms-dbmi/dseqr.sp/master/app.html
+wget https://raw.githubusercontent.com/hms-dbmi/dseqr.sp/master/login.html
+wget https://raw.githubusercontent.com/hms-dbmi/dseqr.sp/master/index.html
 
 # replacement variables set in user data of DseqrAsgStack
 if [ "$USE_COGNITO" = true ]
@@ -53,17 +53,17 @@ else
   ufw --force enable
   # setup nginx
   cd /etc/nginx/sites-available
-  wget -O $HOST_URL https://raw.githubusercontent.com/hms-dbmi/drugseqr.sp/master/nginx.conf
+  wget -O $HOST_URL https://raw.githubusercontent.com/hms-dbmi/dseqr.sp/master/nginx.conf
   # change server name
   sed -i "s/localhost/$HOST_URL www.$HOST_URL/" $HOST_URL
   # enable site and restart nginx
   ln -s /etc/nginx/sites-available/$HOST_URL /etc/nginx/sites-enabled/
   rm /etc/nginx/sites-enabled/default
   systemctl restart nginx
-  cd /home/ubuntu/drugseqr.sp
+  cd /home/ubuntu/dseqr.sp
 fi
 
-docker build -t drugseqr.sp .
+docker build -t dseqr.sp .
 
 # setup ssl
 if [ "$GET_CERT" = true ]; then
@@ -76,14 +76,14 @@ fi
 
 # init example app
 docker run --rm \
-  -v /srv/drugseqr:/srv/drugseqr \
-  alexvpickering/drugseqr R -e "drugseqr::init_drugseqr('example')"
+  -v /srv/dseqr:/srv/dseqr \
+  alexvpickering/dseqr R -e "dseqr::init_dseqr('example')"
 
 # get data for example app
-cd /srv/drugseqr/
+cd /srv/dseqr/
 if [ "$EXAMPLE_DATA" = true ] && [ ! -f "example_data.tar.gz" ]; then
   rm -rf example
-  wget https://drugseqr.s3.us-east-2.amazonaws.com/example_data.tar.gz
+  wget https://dseqr.s3.us-east-2.amazonaws.com/example_data.tar.gz
   tar -xzvf example_data.tar.gz
   rm example_data.tar.gz
   touch example_data.tar.gz # so that don't re-download
@@ -94,4 +94,4 @@ docker run -d --restart always \
  -v /var/run/docker.sock:/var/run/docker.sock \
  --net sp-example-net \
   -p $SHINYPROXY_PORT:8080 \
-   drugseqr.sp
+   dseqr.sp

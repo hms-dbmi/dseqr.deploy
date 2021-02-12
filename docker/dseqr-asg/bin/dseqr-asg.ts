@@ -13,6 +13,7 @@ const env = { region: "us-east-2" };
 const zoneStack = new DseqrZoneStack(app, "DseqrZoneStack", {
   env,
 });
+
 const VpcStack = new DseqrVpcStack(app, "VpcStack", { env });
 
 const EfsStack = new DseqrEfsStack(app, "DseqrEfsStack", {

@@ -1,8 +1,8 @@
 {
-  "name": "dseqr-cdk-lambda",
+  "name": "dseqr-deploy",
   "version": "0.1.0",
   "bin": {
-    "dseqr-cdk-lambda": "bin/dseqr-cdk-lambda.js"
+    "dseqr-deploy": "bin/dseqr-from-lambda.js"
   },
   "scripts": {
     "build": "tsc",
