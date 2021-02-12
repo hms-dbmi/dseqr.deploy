@@ -14,7 +14,7 @@ const zoneStack = new DseqrZoneStack(app, "DseqrZoneStack", {
   env,
 });
 
-const VpcStack = new DseqrVpcStack(app, "VpcStack", { env });
+const VpcStack = new DseqrVpcStack(app, "DseqrVpcStack", { env });
 
 const EfsStack = new DseqrEfsStack(app, "DseqrEfsStack", {
   vpc: VpcStack.vpc,
