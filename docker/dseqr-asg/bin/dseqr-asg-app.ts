@@ -24,7 +24,7 @@ const cognitoStack = new DseqrCognitoStack(app, "DseqrCognitoStack", {
   env,
 });
 
-new DseqrAsgStack(app, "DseqrAsgFromLambdaStack", {
+new DseqrAsgStack(app, "DseqrAsgStack", {
   zone: zoneStack.zone,
   certificate: zoneStack.certificate,
   vpc: VpcStack.vpc,

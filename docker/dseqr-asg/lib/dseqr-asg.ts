@@ -8,7 +8,10 @@ import * as alias from "@aws-cdk/aws-route53-targets";
 import * as efs from "@aws-cdk/aws-efs";
 import * as cognito from "@aws-cdk/aws-cognito";
 import * as route53_targets from "@aws-cdk/aws-route53-targets";
+import * as lambda from "@aws-cdk/aws-lambda";
+import * as targets from "@aws-cdk/aws-elasticloadbalancingv2-targets";
 import * as fs from "fs";
+import * as path from "path";
 
 interface DseqrASGProps extends cdk.StackProps {
   zone: route53.IHostedZone;
@@ -186,19 +189,33 @@ export class DseqrAsgStack extends cdk.Stack {
     // redirect to 443
     lb.addRedirect();
 
+    // check if live on port 8080
+    const lambdaFunction = new lambda.Function(this, "LambdaHealth", {
+      code: lambda.Code.fromAsset(path.join(__dirname, "../lambda")),
+      handler: "health.handler",
+      runtime: lambda.Runtime.NODEJS_12_X,
+    });
+
     // listen on 443
     const listener = lb.addListener("Listener", {
       port: 443,
       certificates: [certificate],
     });
 
-    listener.connections.allowDefaultPortFromAnyIpv4("Open to the world");
+    // for checking that server is live
+    listener.addTargets("LambdaHealthTarget", {
+      priority: 1,
+      conditions: [elbv2.ListenerCondition.httpRequestMethods(["OPTIONS"])],
+      targets: [new targets.LambdaTarget(lambdaFunction)],
+    });
 
-    // send to port 80 on instances (nginx passes on)
+    // send to port 80 on instances (shinyproxy)
     listener.addTargets("Targets", {
       port: 80,
       targets: [autoScalingGroup],
       stickinessCookieDuration: cdk.Duration.days(3), // requests from same session to same instance
     });
+
+    listener.connections.allowDefaultPortFromAnyIpv4("Open to the world");
   }
 }

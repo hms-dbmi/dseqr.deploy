@@ -6,5 +6,4 @@
     "get_cert": false,
     "auth_cert_arn": "arn:aws:acm:us-east-1:276662185266:certificate/dea578a4-0278-4f18-9b6f-719a24355ebe",
     "cert_arn": "arn:aws:acm:us-east-2:276662185266:certificate/b0724936-50b2-4650-92c9-bde32d59a1c2"
-
 }

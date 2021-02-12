@@ -1,11 +1,11 @@
 import * as path from "path";
 import * as iam from "@aws-cdk/aws-iam";
-
 import * as cdk from "@aws-cdk/core";
-import * as Lambda from "@aws-cdk/aws-lambda";
-import * as apigateway from "@aws-cdk/aws-apigateway";
+import * as lambda from "@aws-cdk/aws-lambda";
+import * as targets from "@aws-cdk/aws-events-targets";
+import { Rule, Schedule, RuleTargetInput } from "@aws-cdk/aws-events";
 
-export class CDKLambdaDocker extends cdk.Stack {
+export class DseqrFromLambdaStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
@@ -42,17 +42,33 @@ export class CDKLambdaDocker extends cdk.Stack {
         "iam:*",
         "lambda:*",
         "cloudfront:*",
+        "logs:*",
+        "events:*",
       ],
     });
 
     // Create AWS Lambda function and push image to ECR
-    // couldn't figure out how to add api gateway endpoint
+    // couldn't figure out how to add http api gateway endpoint
     // need to add in console
-    new Lambda.DockerImageFunction(this, "function", {
-      code: Lambda.DockerImageCode.fromImageAsset(dockerfile),
-      timeout: cdk.Duration.minutes(15),
-      memorySize: 1024,
-      initialPolicy: [cloudformationPolicy, resourcePolicy],
+    const cdkLambda = new lambda.DockerImageFunction(
+      this,
+      "DeployDseqrLambda",
+      {
+        code: lambda.DockerImageCode.fromImageAsset(dockerfile),
+        timeout: cdk.Duration.minutes(14),
+        memorySize: 512,
+        initialPolicy: [cloudformationPolicy, resourcePolicy],
+      }
+    );
+
+    // check every hour for possible destroy
+    new Rule(this, "ScheduleRule", {
+      schedule: Schedule.cron({ minute: "0", hour: "1" }),
+      targets: [
+        new targets.LambdaFunction(cdkLambda, {
+          event: RuleTargetInput.fromObject({ destroy: true }),
+        }),
+      ],
     });
   }
 }
