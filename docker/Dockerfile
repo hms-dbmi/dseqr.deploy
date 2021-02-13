@@ -12,7 +12,7 @@ ENV AWS_CDK_VERSION=1.87.1
 RUN npm install -g aws-cdk@${AWS_CDK_VERSION}
 
 RUN mkdir -p /var/task/dseqr-asg
-COPY ../../dseqr-asg/ /var/task/dseqr-asg/
+COPY dseqr-asg/ /var/task/dseqr-asg/
 RUN cd dseqr-asg && \
     rm -rf node_modules package-lock.json && \
     npm install

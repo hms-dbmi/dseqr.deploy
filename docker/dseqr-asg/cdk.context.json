@@ -2,5 +2,7 @@
     "ssh_key_name": "ohio-xps15",
     "domain_name": "dseqr.com",
     "zone_id": "Z02674162IV5MW4WR4LOT",
-    "keep_efs": true
+    "keep_efs": true,
+    "auth_cert_arn": "arn:aws:acm:us-east-1:276662185266:certificate/9d3aa03e-eb67-431d-a41f-da37d90fcf05",
+    "cert_arn": "arn:aws:acm:us-east-2:276662185266:certificate/96de1169-9e64-403e-9203-03c9257c2421"
 }
