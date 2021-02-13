@@ -64,7 +64,7 @@ export class DseqrFromLambdaStack extends cdk.Stack {
 
     // check every hour for possible destroy
     new Rule(this, "ScheduleRule", {
-      schedule: Schedule.cron({ minute: "0", hour: "1" }),
+      schedule: Schedule.rate(cdk.Duration.hours(1)),
       targets: [
         new targets.LambdaFunction(cdkLambda, {
           event: RuleTargetInput.fromObject({ destroy: true }),
