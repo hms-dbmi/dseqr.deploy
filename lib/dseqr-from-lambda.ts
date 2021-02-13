@@ -27,6 +27,7 @@ export class DseqrFromLambdaStack extends cdk.Stack {
       ],
     });
 
+    // TODO: make more restrictive
     const resourcePolicy = new iam.PolicyStatement({
       resources: ["*"],
       actions: [
@@ -55,7 +56,7 @@ export class DseqrFromLambdaStack extends cdk.Stack {
       "DeployDseqrLambda",
       {
         code: lambda.DockerImageCode.fromImageAsset(dockerfile),
-        timeout: cdk.Duration.minutes(14),
+        timeout: cdk.Duration.minutes(15),
         memorySize: 512,
         initialPolicy: [cloudformationPolicy, resourcePolicy],
       }

@@ -41,7 +41,6 @@ export class DseqrZoneStack extends cdk.Stack {
     } else {
       certificate = new acm.Certificate(this, "Certificate", {
         domainName: "*." + zoneName,
-        subjectAlternativeNames: [zoneName],
         validation: acm.CertificateValidation.fromDns(zone),
       });
     }
