@@ -139,7 +139,7 @@ export class DseqrAsgStack extends cdk.Stack {
       `USER_POOL_ID=${userPool.userPoolId}`,
       `AUTH_DOMAIN=auth.${zoneName}`,
       `CLIENT_ID=${userPoolClient.userPoolClientId}`,
-      `HOST_URL=app.${zoneName}`,
+      `HOST_URL=${zoneName}`,
       `CLIENT_SECRET=${userPoolClientSecret}`
     );
 

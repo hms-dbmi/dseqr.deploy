@@ -57,10 +57,8 @@ export class DseqrCognitoStack extends cdk.Stack {
 
       userPoolClient = userPool.addClient("dseqr-app-client", {
         oAuth: {
-          callbackUrls: [
-            `https://app.${zoneName}/login/oauth2/code/shinyproxy`,
-          ],
-          logoutUrls: [`https://app.${zoneName}`],
+          callbackUrls: [`https://${zoneName}/login/oauth2/code/shinyproxy`],
+          logoutUrls: [`https://${zoneName}`],
         },
         generateSecret: true,
       });
