@@ -5,6 +5,7 @@ import { DseqrAsgStack } from "../lib/dseqr-asg";
 import { DseqrCognitoStack } from "../lib/dseqr-cognito";
 import { DseqrEfsStack } from "../lib/dseqr-efs";
 import { DseqrVpcStack } from "../lib/dseqr-vpc";
+import { DseqrRedirectStack } from "../lib/desqr-redirect";
 
 const app = new cdk.App();
 const env = { region: "us-east-2" };
@@ -34,4 +35,9 @@ new DseqrAsgStack(app, "DseqrAsgStack", {
   userPoolClientSecret: cognitoStack.userPoolClientSecret,
   fileSystem: EfsStack.fileSystem,
   env,
+});
+
+// stack that redirects dseqr.com to docs.dseqr.com when DseqrAsgStack is down
+new DseqrRedirectStack(app, "DseqrRedirectStack", {
+  zone: zoneStack.zone,
 });

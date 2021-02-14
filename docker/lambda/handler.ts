@@ -33,16 +33,27 @@ exports.run = async (event: any, context: any, callback: Function) => {
   const remainingTime = (minElapsed - elapsedTime) / 1000 / 60;
 
   // only destroy if elasped more than minimum
-  if (event.destroy && remainingTime > 0) {
+  if (event.destroy && remainingTime > 0 && !event.force) {
     console.log("Time until destroy:", Math.round(remainingTime), "mins");
     console.log("leaving");
     return;
   } else if (event.destroy) {
-    // destroy command
-    cmd += "cdk destroy DseqrAsgStack " + "--force " + "--output /tmp/cdk.out";
-  } else {
-    // deploy command
+    // destroy DseqrAsgStack and deploy DseqrRedirectStack
     cmd +=
+      "cdk destroy DseqrAsgStack " +
+      "--force " +
+      "--output /tmp/cdk.out " +
+      "&& " +
+      "cdk deploy DseqrRedirectStack " +
+      "--require-approval never " +
+      "--output /tmp/cdk.out";
+  } else {
+    // destroy DseqrRedirectStack and deploy DseqrAsgStack
+    cmd +=
+      "cdk destroy DseqrRedirectStack " +
+      "--force " +
+      "--output /tmp/cdk.out " +
+      "&& " +
       "cdk deploy DseqrAsgStack " +
       "--require-approval never " +
       "--output /tmp/cdk.out";
