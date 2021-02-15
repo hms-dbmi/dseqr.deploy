@@ -74,20 +74,22 @@ if [ "$GET_CERT" = true ]; then
   --agree-tos -m alexvpickering@gmail.com
 fi
 
-# init example app
-docker run --rm \
-  -v /srv/dseqr:/srv/dseqr \
-  alexvpickering/dseqr R -e "dseqr::init_dseqr('example')"
-
 # get data for example app
 cd /srv/dseqr/
 if [ "$EXAMPLE_DATA" = true ] && [ ! -f "example_data.tar.gz" ]; then
-  rm -rf example
   wget https://dseqr.s3.us-east-2.amazonaws.com/example_data.tar.gz
   tar -xzvf example_data.tar.gz
   rm example_data.tar.gz
   touch example_data.tar.gz # so that don't re-download
 fi
+
+# set tmp directory on EFS (for file uploads)
+TMP_DIR=/srv/dseqr/tmp
+[ ! -d "$TMP_DIR" ] && mkdir $TMP_DIR
+echo "TMPDIR = $TMP_DIR" > ${HOME}/.Renviron
+
+# every 12 hours delete fastq.gz files older than 24 hours
+(crontab -l ; echo "0 * * * * find /srv/dseqr -name *.fastq.gz -type f -mmin +360 -delete") | crontab -
 
 # run app
 docker run -d --restart always \
