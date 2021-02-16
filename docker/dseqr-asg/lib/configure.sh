@@ -83,13 +83,12 @@ if [ "$EXAMPLE_DATA" = true ] && [ ! -f "example_data.tar.gz" ]; then
   touch example_data.tar.gz # so that don't re-download
 fi
 
-# set tmp directory on EFS (for file uploads)
-TMP_DIR=/srv/dseqr/tmp
-[ ! -d "$TMP_DIR" ] && mkdir $TMP_DIR
-echo "TMPDIR = $TMP_DIR" > ${HOME}/.Renviron
-
-# every 12 hours delete fastq.gz files older than 24 hours
+# every hour delete fastq.gz files older than 24 hours
+# every hour delete output.bus (scRNA-seq) files older than 24 hours
+# every hour delete abundance.tsv/h5 (RNA-seq) files older than 24 hours
 (crontab -l ; echo "0 * * * * find /srv/dseqr -name *.fastq.gz -type f -mmin +360 -delete") | crontab -
+(crontab -l ; echo "0 * * * * find /srv/dseqr -name output.bus -type f -mmin +360 -delete") | crontab -
+(crontab -l ; echo "0 * * * * find /srv/dseqr -name 'abundance.*' -type f -mmin +360 -delete") | crontab -
 
 # run app
 docker run -d --restart always \
