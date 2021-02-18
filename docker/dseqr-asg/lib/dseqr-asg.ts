@@ -138,7 +138,7 @@ export class DseqrAsgStack extends cdk.Stack {
       "curl -o /root/amazon-cloudwatch-agent.deb https://s3.amazonaws.com/amazoncloudwatch-agent/debian/amd64/latest/amazon-cloudwatch-agent.deb",
       "dpkg -i -E /root/amazon-cloudwatch-agent.deb",
       "usermod -aG adm cwagent",
-      "curl -o /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json URL_TO_AGENT_CONFIG",
+      "curl -o /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json https://raw.githubusercontent.com/hms-dbmi/dseqr.deploy/master/docker/dseqr-asg/lib/agent-config.json",
       "systemctl enable amazon-cloudwatch-agent.service",
       "service amazon-cloudwatch-agent start"
     );
@@ -193,15 +193,20 @@ export class DseqrAsgStack extends cdk.Stack {
       ],
     });
 
-    autoScalingGroup.scaleOnMetric("ScaleUpPolicy", {
+    autoScalingGroup.scaleOnMetric("ScaleToMemoryUsage", {
       metric: new cw.Metric({
         metricName: "mem_used_percent",
-        namespace: "DseqrAsg",
+        namespace: "CWAgent",
+        dimensions: {
+          AutoScalingGroupName: autoScalingGroup.autoScalingGroupName,
+        },
       }),
       scalingSteps: [
         { upper: 10, change: -1 },
-        { lower: 50, change: +1 },
+        { lower: 60, change: +1 },
       ],
+      adjustmentType: autoscaling.AdjustmentType.CHANGE_IN_CAPACITY,
+      estimatedInstanceWarmup: cdk.Duration.seconds(600),
     });
 
     //  policy for cloudwatch agent
@@ -213,7 +218,8 @@ export class DseqrAsgStack extends cdk.Stack {
     );
 
     autoScalingGroup.scaleOnCpuUtilization("ScaleToCPU", {
-      cooldown: cdk.Duration.seconds(600),
+      cooldown: cdk.Duration.seconds(900),
+      estimatedInstanceWarmup: cdk.Duration.seconds(600),
       targetUtilizationPercent: 60,
     });
 
