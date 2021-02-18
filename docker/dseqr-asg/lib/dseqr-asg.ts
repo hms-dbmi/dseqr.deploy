@@ -10,6 +10,8 @@ import * as cognito from "@aws-cdk/aws-cognito";
 import * as route53_targets from "@aws-cdk/aws-route53-targets";
 import * as lambda from "@aws-cdk/aws-lambda";
 import * as targets from "@aws-cdk/aws-elasticloadbalancingv2-targets";
+import * as iam from "@aws-cdk/aws-iam";
+import * as cw from "@aws-cdk/aws-cloudwatch";
 import * as fs from "fs";
 import * as path from "path";
 
@@ -131,6 +133,16 @@ export class DseqrAsgStack extends cdk.Stack {
       "mount -a -t efs,nfs4 defaults"
     );
 
+    // init cloud-watch agent for memory-based scaling
+    userData.addCommands(
+      "curl -o /root/amazon-cloudwatch-agent.deb https://s3.amazonaws.com/amazoncloudwatch-agent/debian/amd64/latest/amazon-cloudwatch-agent.deb",
+      "dpkg -i -E /root/amazon-cloudwatch-agent.deb",
+      "usermod -aG adm cwagent",
+      "curl -o /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json URL_TO_AGENT_CONFIG",
+      "systemctl enable amazon-cloudwatch-agent.service",
+      "service amazon-cloudwatch-agent start"
+    );
+
     // variables to setup application.yml for cognito
     userData.addCommands(
       `USE_COGNITO=true`,
@@ -180,6 +192,25 @@ export class DseqrAsgStack extends cdk.Stack {
         },
       ],
     });
+
+    autoScalingGroup.scaleOnMetric("ScaleUpPolicy", {
+      metric: new cw.Metric({
+        metricName: "mem_used_percent",
+        namespace: "DseqrAsg",
+      }),
+      scalingSteps: [
+        { upper: 10, change: -1 },
+        { lower: 50, change: +1 },
+      ],
+    });
+
+    //  policy for cloudwatch agent
+    autoScalingGroup.addToRolePolicy(
+      new iam.PolicyStatement({
+        resources: ["*"],
+        actions: ["logs:*", "cloudwatch:*"],
+      })
+    );
 
     autoScalingGroup.scaleOnCpuUtilization("ScaleToCPU", {
       cooldown: cdk.Duration.seconds(600),
