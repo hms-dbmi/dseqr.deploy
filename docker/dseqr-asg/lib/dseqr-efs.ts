@@ -68,9 +68,9 @@ export class DseqrEfsStack extends cdk.Stack {
       vpc,
     });
 
-    // run cleanup jobs every hour
+    // run cleanup jobs every 6
     new Rule(this, "ScheduleRule", {
-      schedule: Schedule.rate(cdk.Duration.hours(1)),
+      schedule: Schedule.rate(cdk.Duration.hours(6)),
       targets: [new targets.LambdaFunction(cronLambda)],
     });
 
