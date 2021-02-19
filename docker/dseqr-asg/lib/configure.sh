@@ -83,12 +83,12 @@ if [ "$EXAMPLE_DATA" = true ] && [ ! -f "example_data.tar.gz" ]; then
   touch example_data.tar.gz # so that don't re-download
 fi
 
-# every hour delete fastq.gz files older than 24 hours
-# every hour delete output.bus (scRNA-seq) files older than 24 hours
-# every hour delete abundance.tsv/h5 (RNA-seq) files older than 24 hours
-(crontab -l ; echo "0 * * * * find /srv/dseqr -name *.fastq.gz -type f -mmin +360 -delete") | crontab -
-(crontab -l ; echo "0 * * * * find /srv/dseqr -name output.bus -type f -mmin +360 -delete") | crontab -
-(crontab -l ; echo "0 * * * * find /srv/dseqr -name 'abundance.*' -type f -mmin +360 -delete") | crontab -
+# every minute enable scale-in protection if existing dseqr containers
+apt-get install awscli jq -y
+mkdir /home/ubuntu/protect && cd /home/ubuntu/protect
+wget https://raw.githubusercontent.com/hms-dbmi/dseqr.deploy/master/docker/dseqr-asg/lib/protect.sh
+chmod +x ./protect.sh
+(crontab -l ; echo "* * * * * /home/ubuntu/protect/protect.sh") | crontab -
 
 # run app
 docker run -d --restart always \

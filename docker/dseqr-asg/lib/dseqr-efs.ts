@@ -38,7 +38,7 @@ export class DseqrEfsStack extends cdk.Stack {
     if (fileSystemId && EFSSecurityGroupId) {
       // import existing EFS
       fileSystem = efs.FileSystem.fromFileSystemAttributes(this, "EFS", {
-        fileSystemId: "sdfs",
+        fileSystemId: fileSystemId,
         securityGroup: ec2.SecurityGroup.fromSecurityGroupId(
           this,
           "EFSSecurityGroup",

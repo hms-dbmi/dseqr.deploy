@@ -68,6 +68,7 @@ export class DseqrAsgStack extends cdk.Stack {
     // add A record for domain to direct to load balencer
     const DseqrARecord = new route53.ARecord(this, "ARecord", {
       zone: zone,
+      ttl: cdk.Duration.seconds(60),
       target: route53.RecordTarget.fromAlias(new alias.LoadBalancerTarget(lb)),
     });
 
@@ -134,13 +135,13 @@ export class DseqrAsgStack extends cdk.Stack {
     );
 
     // init cloud-watch agent for memory-based scaling
+    const configPath =
+      "/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json";
     userData.addCommands(
-      "curl -o /root/amazon-cloudwatch-agent.deb https://s3.amazonaws.com/amazoncloudwatch-agent/debian/amd64/latest/amazon-cloudwatch-agent.deb",
-      "dpkg -i -E /root/amazon-cloudwatch-agent.deb",
-      "usermod -aG adm cwagent",
-      "curl -o /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json https://raw.githubusercontent.com/hms-dbmi/dseqr.deploy/master/docker/dseqr-asg/lib/agent-config.json",
-      "systemctl enable amazon-cloudwatch-agent.service",
-      "service amazon-cloudwatch-agent start"
+      "wget https://s3.amazonaws.com/amazoncloudwatch-agent/debian/amd64/latest/amazon-cloudwatch-agent.deb",
+      "dpkg -i -E ./amazon-cloudwatch-agent.deb",
+      `curl -o ${configPath} https://raw.githubusercontent.com/hms-dbmi/dseqr.deploy/master/docker/dseqr-asg/lib/amazon-cloudwatch-agent.json`,
+      `sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s -c file:${configPath}`
     );
 
     // variables to setup application.yml for cognito
@@ -213,7 +214,12 @@ export class DseqrAsgStack extends cdk.Stack {
     autoScalingGroup.addToRolePolicy(
       new iam.PolicyStatement({
         resources: ["*"],
-        actions: ["logs:*", "cloudwatch:*"],
+        actions: [
+          "logs:*",
+          "cloudwatch:*",
+          "ec2:DescribeTags",
+          "autoscaling:SetInstanceProtection",
+        ],
       })
     );
 

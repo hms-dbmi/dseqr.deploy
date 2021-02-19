@@ -6,5 +6,7 @@
     "auth_cert_arn": "arn:aws:acm:us-east-1:276662185266:certificate/9d3aa03e-eb67-431d-a41f-da37d90fcf05",
     "cert_arn": "arn:aws:acm:us-east-2:276662185266:certificate/96de1169-9e64-403e-9203-03c9257c2421",
     "cf_id": "E102EGTD5GDKAL",
-    "cf_domain": "d2t0j32mg52uhy.cloudfront.net"
+    "cf_domain": "d2t0j32mg52uhy.cloudfront.net",
+    "efs_id": "fs-7cc89b04",
+    "efs_sg_id": "sg-04e1fa3b5909a1bda"
 }
