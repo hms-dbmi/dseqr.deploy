@@ -7,6 +7,7 @@ exports.handler = async (event: any, context: any, callback: Function) => {
   var result = findRemoveSync("/mnt/dseqr", {
     extensions: [".fastq.gz"],
     files: ["output.bs", "abundance.tsv", "abundance.h5"],
+    age: { seconds: 60 * 60 * 24 },
   });
 
   console.log("Deleted files:", JSON.stringify(result, null, 2));
