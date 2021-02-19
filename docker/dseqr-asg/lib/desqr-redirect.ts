@@ -32,7 +32,7 @@ export class DseqrRedirectStack extends cdk.Stack {
     new route53.ARecord(this, "DseqrRedirect", {
       zone,
       target: route53.RecordTarget.fromAlias(aliasTarget),
-      ttl: cdk.Duration.seconds(60),
+      ttl: cdk.Duration.seconds(0),
     });
   }
 }

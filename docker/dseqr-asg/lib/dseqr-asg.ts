@@ -68,7 +68,7 @@ export class DseqrAsgStack extends cdk.Stack {
     // add A record for domain to direct to load balencer
     const DseqrARecord = new route53.ARecord(this, "ARecord", {
       zone: zone,
-      ttl: cdk.Duration.seconds(60),
+      ttl: cdk.Duration.seconds(0),
       target: route53.RecordTarget.fromAlias(new alias.LoadBalancerTarget(lb)),
     });
 
