@@ -1,11 +1,13 @@
-const util = require("util");
-const exec = util.promisify(require("child_process").exec);
+const findRemoveSync = require("./findRemoveSync.js");
 
 exports.handler = async (event: any, context: any, callback: Function) => {
-  // every hour delete fastq.gz files older than 24 hours
-  // every hour delete output.bus (scRNA-seq) files older than 24 hours
-  // every hour delete abundance.tsv/h5 (RNA-seq) files older than 24 hours
-  await exec("find /mnt/dseqr -name *.fastq.gz -type f -mmin +360 -delete");
-  await exec("find /mnt/dseqr -name output.bus -type f -mmin +360 -delete");
-  await exec("find /mnt/dseqr -name 'abundance.*' -type f -mmin +360 -delete");
+  // delete fastq.gz files older than 24 hours
+  // delete output.bus (scRNA-seq) files older than 24 hours
+  // delete abundance.tsv/h5 (RNA-seq) files older than 24 hours
+  var result = findRemoveSync("/mnt/dseqr", {
+    extensions: [".fastq.gz"],
+    files: ["output.bs", "abundance.tsv", "abundance.h5"],
+  });
+
+  console.log("Deleted files:", JSON.stringify(result, null, 2));
 };

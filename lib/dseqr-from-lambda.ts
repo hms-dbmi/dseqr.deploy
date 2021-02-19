@@ -43,6 +43,7 @@ export class DseqrFromLambdaStack extends cdk.Stack {
         "iam:*",
         "lambda:*",
         "cloudfront:*",
+        "cloudwatch:*",
         "logs:*",
         "events:*",
       ],

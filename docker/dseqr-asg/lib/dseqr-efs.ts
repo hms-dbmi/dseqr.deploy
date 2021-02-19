@@ -3,6 +3,7 @@ import * as cdk from "@aws-cdk/core";
 import * as efs from "@aws-cdk/aws-efs";
 import * as lambda from "@aws-cdk/aws-lambda";
 import * as targets from "@aws-cdk/aws-events-targets";
+import * as iam from "@aws-cdk/aws-iam";
 import { Rule, Schedule } from "@aws-cdk/aws-events";
 import * as path from "path";
 
@@ -45,7 +46,12 @@ export class DseqrEfsStack extends cdk.Stack {
       lifecyclePolicy: efs.LifecyclePolicy.AFTER_7_DAYS, // transition to infrequent access
       removalPolicy,
     });
-    const accessPoint = fileSystem.addAccessPoint("AccessPoint");
+    const accessPoint = fileSystem.addAccessPoint("AccessPoint", {
+      posixUser: {
+        gid: "0",
+        uid: "0",
+      },
+    });
 
     fileSystem.connections.allowDefaultPortFromAnyIpv4();
 
@@ -54,6 +60,7 @@ export class DseqrEfsStack extends cdk.Stack {
       code: lambda.Code.fromAsset(path.join(__dirname, "../lambda")),
       handler: "cron.handler",
       runtime: lambda.Runtime.NODEJS_12_X,
+      timeout: cdk.Duration.minutes(3),
       filesystem: lambda.FileSystem.fromEfsAccessPoint(
         accessPoint,
         "/mnt/dseqr"

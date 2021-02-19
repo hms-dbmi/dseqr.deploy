@@ -14,8 +14,11 @@ RUN npm install -g aws-cdk@${AWS_CDK_VERSION}
 RUN mkdir -p /var/task/dseqr-asg
 COPY dseqr-asg/ /var/task/dseqr-asg/
 RUN cd dseqr-asg && \
-    rm -rf node_modules package-lock.json && \
     npm install
+
+RUN cd /var/task/dseqr-asg/lambda && \
+    npm install && \
+    cd ..
 
 COPY lambda/handler.js .
 CMD [ "handler.run" ]
