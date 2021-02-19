@@ -1,4 +1,6 @@
 #!/bin/bash
+cd /home/ubuntu/protect
+
 if [ ! -f "instance.txt" ]; then
     INSTANCE_ID="`wget -q -O - http://169.254.169.254/latest/meta-data/instance-id`"
     ASG_NAME=`aws ec2 describe-tags --filters "Name=resource-id,Values=$INSTANCE_ID"  --region us-east-2 | jq '.Tags[] | select(.["Key"] | contains("aws:autoscaling:groupName")) | .Value'`
