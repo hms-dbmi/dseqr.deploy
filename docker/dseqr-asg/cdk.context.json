@@ -3,8 +3,8 @@
     "domain_name": "dseqr.com",
     "zone_id": "Z02674162IV5MW4WR4LOT",
     "keep_efs": true,
-    "auth_cert_arn": "arn:aws:acm:us-east-1:276662185266:certificate/9d3aa03e-eb67-431d-a41f-da37d90fcf05",
-    "cert_arn": "arn:aws:acm:us-east-2:276662185266:certificate/96de1169-9e64-403e-9203-03c9257c2421",
+    "auth_cert_arn": "arn:aws:acm:us-east-1:276662185266:certificate/f0ad8f84-11b0-48a2-8ce2-dd781a3d084c",
+    "cert_arn": "arn:aws:acm:us-east-2:276662185266:certificate/7050a83e-5bd5-40fe-afa1-26d51edb16d6",
     "cf_id": "E102EGTD5GDKAL",
     "cf_domain": "d2t0j32mg52uhy.cloudfront.net"
 }
