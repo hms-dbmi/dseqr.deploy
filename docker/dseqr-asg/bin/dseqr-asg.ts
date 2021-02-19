@@ -6,7 +6,6 @@ import { DseqrCognitoStack } from "../lib/dseqr-cognito";
 import { DseqrEfsStack } from "../lib/dseqr-efs";
 import { DseqrVpcStack } from "../lib/dseqr-vpc";
 import { DseqrRedirectStack } from "../lib/desqr-redirect";
-import { DseqrCronLambdaStack } from "../lib/dseqr-cron-lambda";
 
 const app = new cdk.App();
 const env = { region: "us-east-2" };
@@ -21,10 +20,6 @@ const VpcStack = new DseqrVpcStack(app, "DseqrVpcStack", { env });
 const EfsStack = new DseqrEfsStack(app, "DseqrEfsStack", {
   vpc: VpcStack.vpc,
   env,
-});
-
-const CronLambdaStack = new DseqrCronLambdaStack(app, "DseqrCronLambdaStack", {
-  fileSystem: EfsStack.fileSystem,
 });
 
 const cognitoStack = new DseqrCognitoStack(app, "DseqrCognitoStack", {

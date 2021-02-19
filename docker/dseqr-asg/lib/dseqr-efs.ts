@@ -1,6 +1,10 @@
 import * as ec2 from "@aws-cdk/aws-ec2";
 import * as cdk from "@aws-cdk/core";
 import * as efs from "@aws-cdk/aws-efs";
+import * as lambda from "@aws-cdk/aws-lambda";
+import * as targets from "@aws-cdk/aws-events-targets";
+import { Rule, Schedule } from "@aws-cdk/aws-events";
+import * as path from "path";
 
 interface DseqrEfsProps extends cdk.StackProps {
   vpc: ec2.IVpc;
@@ -33,29 +37,35 @@ export class DseqrEfsStack extends cdk.Stack {
 
     // script that is run on startup
 
-    // EFS setup (existing or new)
-    let fileSystem;
-    if (fileSystemId && EFSSecurityGroupId) {
-      // import existing EFS
-      fileSystem = efs.FileSystem.fromFileSystemAttributes(this, "EFS", {
-        fileSystemId: fileSystemId,
-        securityGroup: ec2.SecurityGroup.fromSecurityGroupId(
-          this,
-          "EFSSecurityGroup",
-          EFSSecurityGroupId
-        ),
-      });
-    } else {
-      // new EFS to share between instances
-      fileSystem = new efs.FileSystem(this, "EFS", {
-        vpc,
-        lifecyclePolicy: efs.LifecyclePolicy.AFTER_7_DAYS, // transition to infrequent access
-        removalPolicy,
-      });
-      fileSystem.addAccessPoint("AcessPoint");
-    }
+    // EFS setup
+
+    // new EFS to share between instances
+    const fileSystem = new efs.FileSystem(this, "EFS", {
+      vpc,
+      lifecyclePolicy: efs.LifecyclePolicy.AFTER_7_DAYS, // transition to infrequent access
+      removalPolicy,
+    });
+    const accessPoint = fileSystem.addAccessPoint("AccessPoint");
 
     fileSystem.connections.allowDefaultPortFromAnyIpv4();
+
+    // lambda cleanup function (to delete fastq and other large files)
+    const cronLambda = new lambda.Function(this, "CronLambda", {
+      code: lambda.Code.fromAsset(path.join(__dirname, "../lambda")),
+      handler: "cron.handler",
+      runtime: lambda.Runtime.NODEJS_12_X,
+      filesystem: lambda.FileSystem.fromEfsAccessPoint(
+        accessPoint,
+        "/mnt/dseqr"
+      ),
+      vpc,
+    });
+
+    // run cleanup jobs every hour
+    new Rule(this, "ScheduleRule", {
+      schedule: Schedule.rate(cdk.Duration.hours(1)),
+      targets: [new targets.LambdaFunction(cronLambda)],
+    });
 
     this.fileSystem = fileSystem;
   }
