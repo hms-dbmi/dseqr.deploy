@@ -38,22 +38,11 @@ exports.run = async (event: any, context: any, callback: Function) => {
     console.log("leaving");
     return;
   } else if (event.destroy) {
-    // destroy DseqrAsgStack and deploy DseqrRedirectStack
-    cmd +=
-      "cdk destroy DseqrAsgStack " +
-      "--force " +
-      "--output /tmp/cdk.out " +
-      "&& " +
-      "cdk deploy DseqrRedirectStack " +
-      "--require-approval never " +
-      "--output /tmp/cdk.out";
+    // destroy DseqrAsgStack
+    cmd += "cdk destroy DseqrAsgStack " + "--force " + "--output /tmp/cdk.out";
   } else {
-    // destroy DseqrRedirectStack and deploy DseqrAsgStack
+    // deploy DseqrAsgStack
     cmd +=
-      "cdk destroy DseqrRedirectStack " +
-      "--force " +
-      "--output /tmp/cdk.out " +
-      "&& " +
       "cdk deploy DseqrAsgStack " +
       "--require-approval never " +
       "--output /tmp/cdk.out";

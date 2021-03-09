@@ -83,6 +83,12 @@ if [ "$EXAMPLE_DATA" = true ] && [ ! -f "example_data.tar.gz" ]; then
   touch example_data.tar.gz # so that don't re-download
 fi
 
+if ! ls /srv/dseqr/indices/kallisto_* > /dev/null 2>&1
+then
+  mkdir -p /srv/dseqr/indices
+  docker run --rm -v /srv/dseqr:/srv/dseqr alexvpickering/dseqr R -e "rkal::build_kallisto_index('/srv/dseqr/indices')"
+fi
+
 # every minute enable scale-in protection if existing dseqr containers
 apt-get install awscli jq -y
 mkdir /home/ubuntu/protect && cd /home/ubuntu/protect

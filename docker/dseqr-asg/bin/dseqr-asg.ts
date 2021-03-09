@@ -38,6 +38,6 @@ new DseqrAsgStack(app, "DseqrAsgStack", {
 });
 
 // stack that redirects dseqr.com to docs.dseqr.com when DseqrAsgStack is down
-new DseqrRedirectStack(app, "DseqrRedirectStack", {
-  zone: zoneStack.zone,
-});
+// new DseqrRedirectStack(app, "DseqrRedirectStack", {
+//   zone: zoneStack.zone,
+// });
