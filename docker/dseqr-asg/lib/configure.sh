@@ -11,11 +11,9 @@ add-apt-repository    "deb [arch=amd64] https://download.docker.com/linux/ubuntu
     stable"
 apt-get update
 apt-get install docker-ce docker-ce-cli containerd.io -y
-docker run hello-world
 
 # pull dseqr
 docker pull alexvpickering/dseqr
-docker pull openanalytics/shinyproxy-demo
 docker network create sp-example-net
 
 # get Dockerfile for ShinyProxy image
