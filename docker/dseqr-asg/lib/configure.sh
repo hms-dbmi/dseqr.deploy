@@ -81,10 +81,10 @@ if [ "$EXAMPLE_DATA" = true ] && [ ! -f "example_data.tar.gz" ]; then
   touch example_data.tar.gz # so that don't re-download
 fi
 
-if ! ls /srv/dseqr/indices/kallisto_* > /dev/null 2>&1
+if ! ls /srv/dseqr/.indices_dir/kallisto_* > /dev/null 2>&1
 then
-  mkdir -p /srv/dseqr/indices
-  docker run --rm -v /srv/dseqr:/srv/dseqr alexvpickering/dseqr R -e "rkal::build_kallisto_index('/srv/dseqr/indices')"
+  mkdir -p /srv/dseqr/.indices_dir
+  docker run --rm -v /srv/dseqr:/srv/dseqr alexvpickering/dseqr R -e "rkal::build_kallisto_index('/srv/dseqr/.indices_dir')"
 fi
 
 # every minute enable scale-in protection if existing dseqr containers
