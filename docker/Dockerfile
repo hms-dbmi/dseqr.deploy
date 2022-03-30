@@ -8,16 +8,18 @@ RUN mkdir -p ${FUNCTION_DIR}
 RUN cd ${FUNCTION_DIR}
 
 # install cdk
-ENV AWS_CDK_VERSION=1.87.1
+ENV AWS_CDK_VERSION=2.18.0
+ENV YARN_VERSION=1.22.18
 RUN npm install -g aws-cdk@${AWS_CDK_VERSION}
+RUN npm install -g yarn@${YARN_VERSION}
 
 RUN mkdir -p /var/task/dseqr-asg
 COPY dseqr-asg/ /var/task/dseqr-asg/
 RUN cd dseqr-asg && \
-    npm install
+    yarn install
 
 RUN cd /var/task/dseqr-asg/lambda && \
-    npm install && \
+    yarn install && \
     cd ..
 
 COPY lambda/handler.js .

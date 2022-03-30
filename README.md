@@ -10,5 +10,18 @@
 
 ## Deploying
 
-* build child stack inside `docker/dseqr-asg`
-* build/deploy parent stack
+```
+# build child stack inside `docker/dseqr-asg`
+cd docker/dseqr-asg
+yarn install
+npm run build
+```
+
+```
+# build/deploy parent stack
+cd ../..
+yarn install
+npm run build
+cdk diff
+cdk deploy
+```

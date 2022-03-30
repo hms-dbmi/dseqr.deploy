@@ -30,6 +30,7 @@
     "@aws-cdk/aws-route53": "^1.88.0",
     "@aws-cdk/aws-route53-targets": "^1.88.0",
     "@aws-cdk/core": "^1.88.0",
+    "@serverless-stack/resources": "^0.69.3",
     "find-remove": "^2.0.3"
   }
 }
