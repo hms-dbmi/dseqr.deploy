@@ -41,7 +41,7 @@ export class DseqrAsgStack extends cdk.Stack {
 
     // user configurable parameters (e.g. cdk deploy -c instance_type="r5.large")
     const instanceType =
-      this.node.tryGetContext("instance_type") || "r6g.2xlarge";
+      this.node.tryGetContext("instance_type") || "r6i.2xlarge";
     const volumeSize = this.node.tryGetContext("volume_size") || 18;
     const keyName = this.node.tryGetContext("ssh_key_name");
     const zoneName = this.node.tryGetContext("domain_name");

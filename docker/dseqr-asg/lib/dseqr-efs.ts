@@ -21,15 +21,6 @@ export class DseqrEfsStack extends cdk.Stack {
     // user configurable parameters (e.g. cdk deploy -c instance_type="r5.large")
     const keepEFS = this.node.tryGetContext("keep_efs") || true;
     const fileSystemId = this.node.tryGetContext("efs_id");
-    const EFSSecurityGroupId = this.node.tryGetContext("efs_sg_id");
-
-    // both efs is and efs security group id or neither
-    if (
-      (!fileSystemId && EFSSecurityGroupId) ||
-      (fileSystemId && !EFSSecurityGroupId)
-    ) {
-      throw "must provide both efs_id and efs_sg_id to use existing EFS";
-    }
 
     // are we keeping EFS on cdk destroy? default is TRUE
     const removalPolicy = keepEFS
@@ -40,18 +31,53 @@ export class DseqrEfsStack extends cdk.Stack {
 
     // EFS setup
 
-    // new EFS to share between instances
-    const fileSystem = new efs.FileSystem(this, "EFS", {
-      vpc,
-      lifecyclePolicy: efs.LifecyclePolicy.AFTER_7_DAYS, // transition to infrequent access
-      removalPolicy,
-    });
-    const accessPoint = fileSystem.addAccessPoint("AccessPoint", {
+    const securityGroup = new ec2.SecurityGroup(this, 'SG', {
+      vpc
+    })
+
+    let fileSystem: efs.IFileSystem;
+    if (fileSystemId) {
+      fileSystem = efs.FileSystem.fromFileSystemAttributes(this, "EFS", {
+        fileSystemId,
+        securityGroup
+      })
+
+    } else {
+      // new EFS to share between instances
+      fileSystem = new efs.FileSystem(this, "EFS", {
+        vpc,
+        lifecyclePolicy: efs.LifecyclePolicy.AFTER_7_DAYS, // transition to infrequent access
+        removalPolicy,
+        securityGroup
+      });
+    }
+
+    const accessPoint = new efs.AccessPoint(this, "AccessPoint", {
       posixUser: {
         gid: "0",
         uid: "0",
       },
-    });
+      fileSystem: fileSystem, 
+    })
+
+    const mountTargets = vpc.publicSubnets.map((subnet, ind) => {
+      return new efs.CfnMountTarget(this, 'MountTarget' + ind, {
+        fileSystemId: fileSystem.fileSystemId,
+        securityGroups: [securityGroup.securityGroupId],
+        subnetId: subnet.subnetId
+      });
+
+    }) 
+    
+
+
+    // doesn't work with imported FS
+    // const accessPoint = fileSystem.addAccessPoint("AccessPoint", {
+    //   posixUser: {
+    //     gid: "0",
+    //     uid: "0",
+    //   },
+    // });
 
     fileSystem.connections.allowDefaultPortFromAnyIpv4();
 
@@ -68,10 +94,13 @@ export class DseqrEfsStack extends cdk.Stack {
       vpc,
     });
 
+    // need mount target in each availability zone
+    mountTargets.forEach(mountTarget => cronLambda.node.addDependency(mountTarget))
+
     // run cleanup jobs every 6
     new Rule(this, "ScheduleRule", {
       schedule: Schedule.rate(cdk.Duration.hours(6)),
-      targets: [new targets.LambdaFunction(cronLambda)],
+      targets: [new targets.LambdaFunction(cronLambda)]
     });
 
     this.fileSystem = fileSystem;

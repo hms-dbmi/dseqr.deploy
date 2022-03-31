@@ -53,6 +53,7 @@ export class DseqrCognitoStack extends cdk.Stack {
         selfSignUpEnabled: true,
         signInAliases: { email: true },
         autoVerify: { email: true },
+        removalPolicy: cdk.RemovalPolicy.RETAIN
       });
 
       userPoolClient = userPool.addClient("dseqr-app-client", {
