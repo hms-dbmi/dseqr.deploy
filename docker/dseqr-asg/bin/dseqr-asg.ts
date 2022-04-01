@@ -23,12 +23,14 @@ const EfsStack = new DseqrEfsStack(app, "DseqrEfsStack", {
 });
 
 const cognitoStack = new DseqrCognitoStack(app, "DseqrCognitoStack", {
+  zone: zoneStack.zone,
   env,
 });
 
 new DseqrAsgStack(app, "DseqrAsgStack", {
-  zone: zoneStack.zone,
   certificate: zoneStack.certificate,
+  authCertificate: cognitoStack.authCertificate,
+  zone: zoneStack.zone,
   vpc: VpcStack.vpc,
   userPool: cognitoStack.userPool,
   userPoolClient: cognitoStack.userPoolClient,

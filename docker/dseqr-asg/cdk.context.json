@@ -3,8 +3,6 @@
     "domain_name": "dseqr.com",
     "zone_id": "Z02674162IV5MW4WR4LOT",
     "keep_efs": true,
-    "auth_cert_arn": "arn:aws:acm:us-east-1:276662185266:certificate/cd7e1880-32ba-4e60-aa3e-053674856df8",
-    "cert_arn": "arn:aws:acm:us-east-2:276662185266:certificate/dddd7070-1cef-4e49-96be-ecad70cc4c35",
     "cf_id": "E102EGTD5GDKAL",
     "cf_domain": "d2t0j32mg52uhy.cloudfront.net",
     "efs_id": "fs-a10524d9"

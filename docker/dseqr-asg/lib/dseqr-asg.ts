@@ -14,10 +14,12 @@ import * as iam from "@aws-cdk/aws-iam";
 import * as cw from "@aws-cdk/aws-cloudwatch";
 import * as fs from "fs";
 import * as path from "path";
+import { RemovalPolicy } from "@aws-cdk/core";
 
 interface DseqrASGProps extends cdk.StackProps {
-  zone: route53.IHostedZone;
   certificate: acm.ICertificate;
+  authCertificate: acm.ICertificate;
+  zone: route53.IHostedZone;
   userPool: cognito.IUserPool;
   userPoolClient: cognito.IUserPoolClient;
   userPoolClientSecret: string;
@@ -30,13 +32,14 @@ export class DseqrAsgStack extends cdk.Stack {
     super(scope, id, props);
 
     const {
-      zone,
       certificate,
       userPool,
       userPoolClient,
       userPoolClientSecret,
       vpc,
       fileSystem,
+      authCertificate,
+      zone
     } = props;
 
     // user configurable parameters (e.g. cdk deploy -c instance_type="r5.large")
@@ -45,18 +48,11 @@ export class DseqrAsgStack extends cdk.Stack {
     const volumeSize = this.node.tryGetContext("volume_size") || 18;
     const keyName = this.node.tryGetContext("ssh_key_name");
     const zoneName = this.node.tryGetContext("domain_name");
-    const hostedZoneId = this.node.tryGetContext("zone_id");
-    const authCertificateArn = this.node.tryGetContext("auth_cert_arn");
     const exampleData = this.node.tryGetContext("example_data") || true;
 
     // check for ssh key
     if (typeof keyName == "undefined") {
       throw "ssh_key_name not provided";
-    }
-
-    // both zone name and id
-    if (!zoneName || !hostedZoneId) {
-      throw "must provide both domain_name and zone_id to setup existing domain";
     }
 
     // create a load balancer
@@ -72,25 +68,6 @@ export class DseqrAsgStack extends cdk.Stack {
       target: route53.RecordTarget.fromAlias(new alias.LoadBalancerTarget(lb)),
     });
 
-    // using custom domain for userpool authentication requires certificate in us-east-1
-    let authCertificate;
-    if (authCertificateArn) {
-      authCertificate = acm.Certificate.fromCertificateArn(
-        this,
-        "authCertificate",
-        authCertificateArn
-      );
-    } else {
-      authCertificate = new acm.DnsValidatedCertificate(
-        this,
-        "authCertificate",
-        {
-          domainName: `auth.${zoneName}`,
-          hostedZone: zone,
-          region: "us-east-1",
-        }
-      );
-    }
 
     // user supplied domain for signin page
     // this depends on A record for root domain
@@ -104,6 +81,7 @@ export class DseqrAsgStack extends cdk.Stack {
         certificate: authCertificate,
       },
     });
+
 
     userPoolDomain.node.addDependency(DseqrARecord);
 

@@ -47,6 +47,7 @@ export class DseqrEfsStack extends cdk.Stack {
       fileSystem = new efs.FileSystem(this, "EFS", {
         vpc,
         lifecyclePolicy: efs.LifecyclePolicy.AFTER_7_DAYS, // transition to infrequent access
+        outOfInfrequentAccessPolicy: efs.OutOfInfrequentAccessPolicy.AFTER_1_ACCESS,
         removalPolicy,
         securityGroup
       });
