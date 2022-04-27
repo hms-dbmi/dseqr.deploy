@@ -15,10 +15,16 @@
 cd docker/dseqr-asg
 yarn install
 npm run build
+
+# update stack
+# BE CAREFUL: CHECK THAT NOT DELETING RESOURCE
+cdk diff DseqrZoneStack
+cdk deploy DseqrZoneStack
 ```
 
 ```
 # build/deploy parent stack
+#
 cd ../..
 yarn install
 npm run build
