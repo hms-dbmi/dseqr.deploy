@@ -1,20 +1,19 @@
-import * as ec2 from "@aws-cdk/aws-ec2";
-import * as cdk from "@aws-cdk/core";
-import * as route53 from "@aws-cdk/aws-route53";
-import * as autoscaling from "@aws-cdk/aws-autoscaling";
-import * as elbv2 from "@aws-cdk/aws-elasticloadbalancingv2";
-import * as acm from "@aws-cdk/aws-certificatemanager";
-import * as alias from "@aws-cdk/aws-route53-targets";
-import * as efs from "@aws-cdk/aws-efs";
-import * as cognito from "@aws-cdk/aws-cognito";
-import * as route53_targets from "@aws-cdk/aws-route53-targets";
-import * as lambda from "@aws-cdk/aws-lambda";
-import * as targets from "@aws-cdk/aws-elasticloadbalancingv2-targets";
-import * as iam from "@aws-cdk/aws-iam";
-import * as cw from "@aws-cdk/aws-cloudwatch";
+import * as ec2 from "aws-cdk-lib/aws-ec2";
+import * as cdk from "aws-cdk-lib";
+import * as route53 from "aws-cdk-lib/aws-route53";
+import * as autoscaling from "aws-cdk-lib/aws-autoscaling";
+import * as elbv2 from "aws-cdk-lib/aws-elasticloadbalancingv2";
+import * as acm from "aws-cdk-lib/aws-certificatemanager";
+import * as alias from "aws-cdk-lib/aws-route53-targets";
+import * as efs from "aws-cdk-lib/aws-efs";
+import * as cognito from "aws-cdk-lib/aws-cognito";
+import * as route53_targets from "aws-cdk-lib/aws-route53-targets";
+import * as lambda from "aws-cdk-lib/aws-lambda";
+import * as targets from "aws-cdk-lib/aws-elasticloadbalancingv2-targets";
+import * as iam from "aws-cdk-lib/aws-iam";
+import * as cw from "aws-cdk-lib/aws-cloudwatch";
 import * as fs from "fs";
 import * as path from "path";
-import { RemovalPolicy } from "@aws-cdk/core";
 
 interface DseqrASGProps extends cdk.StackProps {
   certificate: acm.ICertificate;
@@ -176,7 +175,7 @@ export class DseqrAsgStack extends cdk.Stack {
       metric: new cw.Metric({
         metricName: "mem_used_percent",
         namespace: "CWAgent",
-        dimensions: {
+        dimensionsMap: {
           AutoScalingGroupName: autoScalingGroup.autoScalingGroupName,
         },
       }),
@@ -214,7 +213,7 @@ export class DseqrAsgStack extends cdk.Stack {
     const lambdaFunction = new lambda.Function(this, "LambdaHealth", {
       code: lambda.Code.fromAsset(path.join(__dirname, "../lambda")),
       handler: "health.handler",
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
     });
 
     // listen on 443

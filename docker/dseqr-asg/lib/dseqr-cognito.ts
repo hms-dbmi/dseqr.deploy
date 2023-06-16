@@ -1,12 +1,12 @@
-import * as cdk from "@aws-cdk/core";
-import * as cognito from "@aws-cdk/aws-cognito";
-import * as cr from "@aws-cdk/custom-resources";
-import * as acm from "@aws-cdk/aws-certificatemanager";
-import * as route53 from "@aws-cdk/aws-route53";
-import * as lambda from "@aws-cdk/aws-lambda";
+import * as cdk from "aws-cdk-lib";
+import * as cognito from "aws-cdk-lib/aws-cognito";
+import * as cr from "aws-cdk-lib/custom-resources";
+import * as acm from "aws-cdk-lib/aws-certificatemanager";
+import * as route53 from "aws-cdk-lib/aws-route53";
+import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as path from "path";
-import * as iam from "@aws-cdk/aws-iam";
-import { RemovalPolicy } from "@aws-cdk/core";
+import * as iam from "aws-cdk-lib/aws-iam";
+import { RemovalPolicy } from "aws-cdk-lib";
 
 
 interface DseqrCognitoProps extends cdk.StackProps {
@@ -93,7 +93,7 @@ export class DseqrCognitoStack extends cdk.Stack {
           const backupUsersLambda = new lambda.Function(this, 'BackupUsers', {
             code: lambda.Code.fromAsset(path.join(__dirname, "../lambda")),
             handler: "backup-users.handler",
-            runtime: lambda.Runtime.NODEJS_12_X,
+            runtime: lambda.Runtime.NODEJS_18_X,
             initialPolicy: [s3Policy],
             environment: {
               userPoolId: userPool.userPoolId

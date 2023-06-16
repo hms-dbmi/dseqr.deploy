@@ -1,10 +1,9 @@
-import * as ec2 from "@aws-cdk/aws-ec2";
-import * as cdk from "@aws-cdk/core";
-import * as efs from "@aws-cdk/aws-efs";
-import * as lambda from "@aws-cdk/aws-lambda";
-import * as targets from "@aws-cdk/aws-events-targets";
-import * as iam from "@aws-cdk/aws-iam";
-import { Rule, Schedule } from "@aws-cdk/aws-events";
+import * as ec2 from "aws-cdk-lib/aws-ec2";
+import * as cdk from "aws-cdk-lib";
+import * as efs from "aws-cdk-lib/aws-efs";
+import * as lambda from "aws-cdk-lib/aws-lambda";
+import * as targets from "aws-cdk-lib/aws-events-targets";
+import { Rule, Schedule } from "aws-cdk-lib/aws-events";
 import * as path from "path";
 
 interface DseqrEfsProps extends cdk.StackProps {
@@ -86,7 +85,7 @@ export class DseqrEfsStack extends cdk.Stack {
     const cronLambda = new lambda.Function(this, "CronLambda", {
       code: lambda.Code.fromAsset(path.join(__dirname, "../lambda")),
       handler: "cron.handler",
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       timeout: cdk.Duration.minutes(3),
       filesystem: lambda.FileSystem.fromEfsAccessPoint(
         accessPoint,

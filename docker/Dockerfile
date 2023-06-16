@@ -1,4 +1,4 @@
-FROM public.ecr.aws/lambda/nodejs:14
+FROM public.ecr.aws/lambda/nodejs:16
 # Alternatively, you can pull the base image from Docker Hub: amazon/aws-lambda-nodejs:12
 
 # working directory
@@ -8,8 +8,8 @@ RUN mkdir -p ${FUNCTION_DIR}
 RUN cd ${FUNCTION_DIR}
 
 # install cdk
-ENV AWS_CDK_VERSION=2.18.0
-ENV YARN_VERSION=1.22.18
+ENV AWS_CDK_VERSION=2.84.0
+ENV YARN_VERSION=1.22.19
 RUN npm install -g aws-cdk@${AWS_CDK_VERSION}
 RUN npm install -g yarn@${YARN_VERSION}
 

@@ -1,7 +1,7 @@
-import * as cdk from "@aws-cdk/core";
-import * as route53 from "@aws-cdk/aws-route53";
-import * as alias from "@aws-cdk/aws-route53-targets";
-import * as cf from "@aws-cdk/aws-cloudfront";
+import * as cdk from "aws-cdk-lib";
+import * as route53 from "aws-cdk-lib/aws-route53";
+import * as alias from "aws-cdk-lib/aws-route53-targets";
+import * as cf from "aws-cdk-lib/aws-cloudfront";
 
 interface DseqrRedirectProps extends cdk.StackProps {
   zone: route53.IHostedZone;

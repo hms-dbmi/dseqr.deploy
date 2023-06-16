@@ -1,9 +1,9 @@
 import * as path from "path";
-import * as iam from "@aws-cdk/aws-iam";
-import * as cdk from "@aws-cdk/core";
-import * as lambda from "@aws-cdk/aws-lambda";
-import * as targets from "@aws-cdk/aws-events-targets";
-import { Rule, Schedule, RuleTargetInput } from "@aws-cdk/aws-events";
+import * as iam from "aws-cdk-lib/aws-iam";
+import * as cdk from "aws-cdk-lib";
+import * as lambda from "aws-cdk-lib/aws-lambda";
+import * as targets from "aws-cdk-lib/aws-events-targets";
+import { Rule, Schedule, RuleTargetInput } from "aws-cdk-lib/aws-events";
 
 export class DseqrFromLambdaStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props?: cdk.StackProps) {
@@ -46,6 +46,7 @@ export class DseqrFromLambdaStack extends cdk.Stack {
         "cloudwatch:*",
         "logs:*",
         "events:*",
+        "ssm:*",
       ],
     });
 
@@ -58,9 +59,10 @@ export class DseqrFromLambdaStack extends cdk.Stack {
       {
         code: lambda.DockerImageCode.fromImageAsset(dockerfile),
         timeout: cdk.Duration.minutes(15),
-        memorySize: 512,
+        memorySize: 1024,
         initialPolicy: [cloudformationPolicy, resourcePolicy],
-      }
+        environment: { HOME: '/tmp'}
+      },
     );
 
     // check every hour for possible destroy

@@ -1,11 +1,10 @@
 #!/usr/bin/env node
-import * as cdk from "@aws-cdk/core";
+import * as cdk from "aws-cdk-lib";
 import { DseqrZoneStack } from "../lib/dseqr-zone";
 import { DseqrAsgStack } from "../lib/dseqr-asg";
 import { DseqrCognitoStack } from "../lib/dseqr-cognito";
 import { DseqrEfsStack } from "../lib/dseqr-efs";
 import { DseqrVpcStack } from "../lib/dseqr-vpc";
-import { DseqrRedirectStack } from "../lib/desqr-redirect";
 
 const app = new cdk.App();
 const env = { region: "us-east-2" };
