@@ -10,8 +10,8 @@ const params = {
   Bucket,
   Key,
 };
-// milliseconds in 48 hours
-const minElapsed = 1000 * 60 * 60 * 48;
+// milliseconds in 24 hours
+const minElapsed = 1000 * 60 * 60 * 24;
 
 exports.run = async (event: any, context: any, callback: Function) => {
   console.log("Received event:", JSON.stringify(event, null, 2));

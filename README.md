@@ -12,6 +12,10 @@
 
 ```
 # build child stack inside `docker/dseqr-asg`
+AWS_PROFILE='profile_name'
+AWS_DEFAULT_REGION='us-east-2'
+nvm use v16.16.0
+
 cd docker/dseqr-asg
 yarn install
 npm run build
