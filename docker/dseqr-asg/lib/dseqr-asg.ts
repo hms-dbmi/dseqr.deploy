@@ -43,7 +43,7 @@ export class DseqrAsgStack extends cdk.Stack {
 
     // user configurable parameters (e.g. cdk deploy -c instance_type="r5.large")
     const instanceType =
-      this.node.tryGetContext("instance_type") || "r8g.large";
+      this.node.tryGetContext("instance_type") || "r7i.large";
     const volumeSize = this.node.tryGetContext("volume_size") || 18;
     const keyName = this.node.tryGetContext("ssh_key_name");
     const zoneName = this.node.tryGetContext("domain_name");
@@ -148,27 +148,45 @@ export class DseqrAsgStack extends cdk.Stack {
       "Allow inbound SSH"
     );
 
-    //  create autoscaling group
-    const autoScalingGroup = new autoscaling.AutoScalingGroup(this, "ASG", {
-      vpc,
+    // Create an IAM role for the EC2 instances
+    const instanceRole = new iam.Role(this, "InstanceRole", {
+      assumedBy: new iam.ServicePrincipal("ec2.amazonaws.com"),
+      managedPolicies: [
+        iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonEC2ReadOnlyAccess"),
+        iam.ManagedPolicy.fromAwsManagedPolicyName("CloudWatchAgentServerPolicy"),
+        // Add other policies as needed
+      ],
+    });
+
+    // Create the launch template
+    const launchTemplate = new ec2.LaunchTemplate(this, "LaunchTemplate", {
       instanceType: new ec2.InstanceType(instanceType),
       machineImage: new ec2.GenericLinuxImage({
         "us-east-2": "ami-0dd9f0e7df0f0a138",
       }),
-      minCapacity: 1,
-      maxCapacity: 4,
-      userData,
-      associatePublicIpAddress: true,
-      securityGroup,
       keyName,
-      vpcSubnets: { subnetType: ec2.SubnetType.PUBLIC },
-      spotPrice: "0.192", // m5.xlarge on demand price
+      securityGroup,
       blockDevices: [
         {
           deviceName: "/dev/sda1",
           volume: autoscaling.BlockDeviceVolume.ebs(volumeSize),
         },
       ],
+      userData,
+      spotOptions: {
+        maxPrice: 0.192, // m5.xlarge on demand price
+      },
+      // Set the instance profile and public IP address
+    role: instanceRole,
+    });
+
+    //  create autoscaling group
+    const autoScalingGroup = new autoscaling.AutoScalingGroup(this, "ASG", {
+      vpc,
+      launchTemplate,
+      minCapacity: 1,
+      maxCapacity: 4,
+      vpcSubnets: { subnetType: ec2.SubnetType.PUBLIC },
     });
 
     autoScalingGroup.scaleOnMetric("ScaleToMemoryUsage", {
